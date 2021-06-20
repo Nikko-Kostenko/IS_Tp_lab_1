@@ -9,22 +9,23 @@ using IS_Tp_lab_1;
 
 namespace IS_Tp_lab_1.Controllers
 {
-    public class PlatformsController : Controller
+    public class GameStudiosController : Controller
     {
         private readonly GameIndustryContext _context;
 
-        public PlatformsController(GameIndustryContext context)
+        public GameStudiosController(GameIndustryContext context)
         {
             _context = context;
         }
 
-        // GET: Platforms
+        // GET: GameStudios
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Platforms.ToListAsync());
+            var gameIndustryContext = _context.GameStudios.Include(g => g.Country);
+            return View(await gameIndustryContext.ToListAsync());
         }
 
-        // GET: Platforms/Details/5
+        // GET: GameStudios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +33,42 @@ namespace IS_Tp_lab_1.Controllers
                 return NotFound();
             }
 
-            var platform = await _context.Platforms
+            var gameStudio = await _context.GameStudios
+                .Include(g => g.Country)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (platform == null)
+            if (gameStudio == null)
             {
                 return NotFound();
             }
 
-            return RedirectToAction("Index", "Games", new {id = platform.Id ,name  =platform.Name});
+            return View(gameStudio);
         }
 
-        // GET: Platforms/Create
+        // GET: GameStudios/Create
         public IActionResult Create()
         {
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
             return View();
         }
 
-        // POST: Platforms/Create
+        // POST: GameStudios/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Platform platform)
+        public async Task<IActionResult> Create([Bind("Id,Name,Info,CountryId")] GameStudio gameStudio)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(platform);
+                _context.Add(gameStudio);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(platform);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", gameStudio.CountryId);
+            return View(gameStudio);
         }
 
-        // GET: Platforms/Edit/5
+        // GET: GameStudios/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +76,23 @@ namespace IS_Tp_lab_1.Controllers
                 return NotFound();
             }
 
-            var platform = await _context.Platforms.FindAsync(id);
-            if (platform == null)
+            var gameStudio = await _context.GameStudios.FindAsync(id);
+            if (gameStudio == null)
             {
                 return NotFound();
             }
-            return View(platform);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", gameStudio.CountryId);
+            return View(gameStudio);
         }
 
-        // POST: Platforms/Edit/5
+        // POST: GameStudios/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Platform platform)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Info,CountryId")] GameStudio gameStudio)
         {
-            if (id != platform.Id)
+            if (id != gameStudio.Id)
             {
                 return NotFound();
             }
@@ -96,12 +101,12 @@ namespace IS_Tp_lab_1.Controllers
             {
                 try
                 {
-                    _context.Update(platform);
+                    _context.Update(gameStudio);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PlatformExists(platform.Id))
+                    if (!GameStudioExists(gameStudio.Id))
                     {
                         return NotFound();
                     }
@@ -112,10 +117,11 @@ namespace IS_Tp_lab_1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(platform);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", gameStudio.CountryId);
+            return View(gameStudio);
         }
 
-        // GET: Platforms/Delete/5
+        // GET: GameStudios/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,30 +129,31 @@ namespace IS_Tp_lab_1.Controllers
                 return NotFound();
             }
 
-            var platform = await _context.Platforms
+            var gameStudio = await _context.GameStudios
+                .Include(g => g.Country)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (platform == null)
+            if (gameStudio == null)
             {
                 return NotFound();
             }
 
-            return View(platform);
+            return View(gameStudio);
         }
 
-        // POST: Platforms/Delete/5
+        // POST: GameStudios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var platform = await _context.Platforms.FindAsync(id);
-            _context.Platforms.Remove(platform);
+            var gameStudio = await _context.GameStudios.FindAsync(id);
+            _context.GameStudios.Remove(gameStudio);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PlatformExists(int id)
+        private bool GameStudioExists(int id)
         {
-            return _context.Platforms.Any(e => e.Id == id);
+            return _context.GameStudios.Any(e => e.Id == id);
         }
     }
 }

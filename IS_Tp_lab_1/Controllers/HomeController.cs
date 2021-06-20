@@ -13,14 +13,22 @@ namespace IS_Tp_lab_1.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly GameIndustryContext _context;
+
+        public HomeController(GameIndustryContext context)
         {
-            _logger = logger;
+            _context = context;
         }
+
+        // public HomeController(ILogger<HomeController> logger)
+        // {
+        //    _logger = logger;
+        // }
 
         public IActionResult Index()
         {
-            return View();
+            var model = _context.Platforms;
+            return View(model);
         }
 
         public IActionResult Privacy()
