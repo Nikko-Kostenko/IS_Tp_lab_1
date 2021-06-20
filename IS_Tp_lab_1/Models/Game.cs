@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -7,15 +8,25 @@ namespace IS_Tp_lab_1
 {
     public partial class Game
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int GenreId { get; set; }
-        public int PlatformId { get; set; }
-        public int GameStudioId { get; set; }
-        public string Info { get; set; }
 
+        public int Id { get; set; }
+        [Required(ErrorMessage = "поле не повинно бути порожнім")]
+        [Display(Name = "Назва Гри")]
+        [StringLength(50, ErrorMessage = "Довжина має не перевищувати 50 символів")]
+        public string Name { get; set; }
+        [Display(Name = "Жанр")]
+        public int GenreId { get; set; }
+        [Display(Name = "Платформа")]
+        public int PlatformId { get; set; }
+        [Display(Name = "Ігрова студія ")]
+        public int GameStudioId { get; set; }
+        [Display(Name = "Про гру")]
+        public string Info { get; set; }
+        [Display(Name = "Ігрова студія")]
         public virtual GameStudio GameStudio { get; set; }
+        [Display(Name = "Жанр")]
         public virtual Genre Genre { get; set; }
+        [Display(Name = "Платформа")]
         public virtual Platform Platform { get; set; }
     }
 }

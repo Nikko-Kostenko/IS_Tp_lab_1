@@ -1,0 +1,65 @@
+﻿@model IEnumerable<IS_Tp_lab_1.GameStudio>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Ігрові студії</h1>
+
+<p>
+    <a asp-action="Create" class = "btn btn-primary btn-block" type="button">Додати студію</a>
+</p>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Info)
+            </th>
+            <th>
+                <div class="dropdown">
+                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                        @Html.DisplayNameFor(model => model.Country)
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" asp-route-id="" asp-controller="GameStudios" asp-action="Index">Усі</a>
+                        @using (GameIndustryContext context = new GameIndustryContext())
+                        {
+
+                            foreach (var gitem in context.Countries.ToList())
+                            {
+                                <a class="dropdown-item" asp-route-id="@gitem.Id" asp-controller="GameStudios" asp-action="Index">
+                                    @Html.DisplayFor(modelitem => gitem.Name)
+                                </a>
+                            }
+
+                        }
+                    </div>
+                    </div>
+</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Info)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Country.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Редагувати</a> |
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Дізнатись більше</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Видалити</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
