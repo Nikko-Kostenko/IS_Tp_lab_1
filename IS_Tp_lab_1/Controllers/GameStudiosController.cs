@@ -19,10 +19,20 @@ namespace IS_Tp_lab_1.Controllers
         }
 
         // GET: GameStudios
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
-            var gameIndustryContext = _context.GameStudios.Include(g => g.Country);
-            return View(await gameIndustryContext.ToListAsync());
+            if (id != null)
+            {
+                var gameIndustryCountryContext =
+                    _context.GameStudios.Where(g => g.CountryId == id).Include(g => g.Country);
+                return View(await gameIndustryCountryContext.ToListAsync());
+            }
+            else
+            {
+                var gameIndustryContext =
+                    _context.GameStudios.Include(g => g.Country);
+                return View(await gameIndustryContext.ToListAsync());
+            }
         }
 
         // GET: GameStudios/Details/5
@@ -32,6 +42,8 @@ namespace IS_Tp_lab_1.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.StudioId = id;
 
             var gameStudio = await _context.GameStudios
                 .Include(g => g.Country)
@@ -44,10 +56,21 @@ namespace IS_Tp_lab_1.Controllers
             return View(gameStudio);
         }
 
+        public async Task<IActionResult> ShowGames(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var gameStudio = await _context.GameStudios.FirstOrDefaultAsync(m => m.Id == id);
+
+            return RedirectToAction("Index", "Games", new {studioId = gameStudio.Id, studioName = gameStudio.Name});
+        }
+
         // GET: GameStudios/Create
         public IActionResult Create()
         {
-            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
+            ViewData["id"] = new SelectList(_context.Countries, "Id", "Name");
             return View();
         }
 
@@ -56,7 +79,7 @@ namespace IS_Tp_lab_1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Info,CountryId")] GameStudio gameStudio)
+        public async Task<IActionResult> Create([Bind("Id,Name,Info,id")] GameStudio gameStudio)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +87,7 @@ namespace IS_Tp_lab_1.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", gameStudio.CountryId);
+            ViewData["id"] = new SelectList(_context.Countries, "Id", "Name", gameStudio.CountryId);
             return View(gameStudio);
         }
 
@@ -81,7 +104,7 @@ namespace IS_Tp_lab_1.Controllers
             {
                 return NotFound();
             }
-            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", gameStudio.CountryId);
+            ViewData["id"] = new SelectList(_context.Countries, "Id", "Name", gameStudio.CountryId);
             return View(gameStudio);
         }
 
@@ -90,7 +113,7 @@ namespace IS_Tp_lab_1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Info,CountryId")] GameStudio gameStudio)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Info,id")] GameStudio gameStudio)
         {
             if (id != gameStudio.Id)
             {
@@ -117,7 +140,7 @@ namespace IS_Tp_lab_1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", gameStudio.CountryId);
+            ViewData["id"] = new SelectList(_context.Countries, "Id", "Name", gameStudio.CountryId);
             return View(gameStudio);
         }
 
