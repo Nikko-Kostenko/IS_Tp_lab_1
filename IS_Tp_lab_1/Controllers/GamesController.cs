@@ -23,36 +23,18 @@ namespace IS_Tp_lab_1.Controllers
         }
 
         // GET: Games
-        public async Task<IActionResult> Index(int? id, string? name, int? studioId, string? studioName)
+        public async Task<IActionResult> Index(int? id, string? name, int? genreId)
         {
-             
-
-            ViewBag.StudioId = studioId;
-            ViewBag.StudioName = studioName;
+            if (id == null) return RedirectToAction("Index", "Home");
+           
+            
             ViewBag.PlatformId = id;
             ViewBag.PlatformName = name;
-           
+            ViewBag.GenreId = genreId;
+            var genres = _context.Genres.Where(g => g.Id == genreId);
+            var gameIndustryContext = _context.Games.Where(g => g.PlatformId == id).Include(g => g.GameStudio).Include(g => g.Genre).Include(g => g.Platform);
 
-
-            var gameIndustryPlatformContext = _context.Games.Where(g => g.PlatformId == id).Include(g => g.GameStudio)
-                    .Include(g => g.Genre).Include(g => g.Platform);
-            
-            var gameIndustryStudioContext = _context.Games.Where(g => g.GameStudioId == studioId).Include(g => g.GameStudio)
-                .Include(g => g.Genre).Include(g => g.Platform);
-
-
-            if (id != null)
-            {
-                return View(await gameIndustryPlatformContext.ToListAsync());
-            }
-            else if (studioId != null)
-            {
-                return View(await gameIndustryStudioContext.ToListAsync());
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            return View(await gameIndustryContext.ToListAsync());
         }
 
         // GET: Games/Details/5
@@ -77,24 +59,10 @@ namespace IS_Tp_lab_1.Controllers
         }
 
         // GET: Games/Create
-        public IActionResult Create(int? PlatformId, int? StudioId)
+        public IActionResult Create(int PlatformId)
         {
-            if (PlatformId == null)
-            {
-                ViewBag.CheckIndex = null;
-                ViewBag.StudioId = StudioId;
-                ViewBag.StudioName = _context.GameStudios.Where(c => c.Id == StudioId).FirstOrDefault().Name;
-                ViewData["PlatformId"] = new SelectList(_context.Platforms, "Id", "Name");
-                ViewData["GameStudioId"] = StudioId;
-            }
-            else
-            {   ViewBag.CheckIndex = 1;               
-                ViewBag.PlatfromId =  PlatformId;       
-                ViewBag.PlatformName = _context.Platforms.Where(c => c.Id == PlatformId).FirstOrDefault().Name;
-                ViewData["PlatformId"] = PlatformId;
-                ViewData["GameStudioId"] = new SelectList(_context.GameStudios, "Id", "Name");
-            }
-            
+            ViewData["PlatformId"] = PlatformId;
+            ViewData["GameStudioId"] = new SelectList(_context.GameStudios, "Id", "Name");
             ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name");
             return View();
         }
@@ -104,28 +72,18 @@ namespace IS_Tp_lab_1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int? PlatformId, int StudioId, [Bind("Id,Name,GenreId,PlatformId,GameStudioId,Info")] Game game)
+        public async Task<IActionResult> Create(int PlatformId, [Bind("Id,Name,GenreId,PlatformId,GameStudioId,Info")] Game game)
         {
-            
+            game.PlatformId = PlatformId;
             if (ModelState.IsValid)
             {
                 _context.Add(game);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            if (PlatformId == null)
-            {
-                ViewData["PlatformId"] = new SelectList(_context.Platforms, "Id", "Name", game.PlatformId);
-                ViewData["GameStudioId"] = StudioId;
-            }
-            else
-            {
-                ViewData["PlatformId"] = PlatformId;
-                ViewData["GameStudioId"] = new SelectList(_context.GameStudios, "Id", "Name", game.GameStudioId);
-            }
-            //ViewData["GameStudioId"] = new SelectList(_context.GameStudios, "Id", "Name", game.GameStudioId);
+            ViewData["GameStudioId"] = new SelectList(_context.GameStudios, "Id", "Name", game.GameStudioId);
             ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name", game.GenreId);
-           // ViewData["PlatformId"] = new SelectList(_context.Platforms, "Id", "Name", game.PlatformId);
+            ViewData["PlatformId"] = new SelectList(_context.Platforms, "Id", "Name", game.PlatformId);
             return View(game);
         }
 

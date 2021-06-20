@@ -7,34 +7,30 @@
 <h1>Details</h1>
 
 <div>
-    <div class="card text-white bg-primary mb-3" style="max-width: 50rem;">
-        <h4>GameStudio</h4>
-        <hr/>
-         <dl class="row">
-         <dt class="col-sm-2">
-             @Html.DisplayNameFor(model => model.Name)
-         </dt>
-         <dd class="col-sm-10">
+    <h4>GameStudio</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Name)
-         </dd>
-         <dt class="col-sm-2">
+        </dd>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Info)
-         </dt>
-         <dd class="col-sm-10">
+        </dt>
+        <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Info)
-         </dd>
-         <dt class="col-sm-2">
+        </dd>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Country)
-         </dt>
-         <dd class="col-sm-10">
+        </dt>
+        <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Country.Name)
-         </dd>
+        </dd>
     </dl>
-    </div>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info btn-sm" role="button">редагувати</a> |
-    <a asp-action="Index" class="btn btn-info btn-sm" role="button">повернутись назад</a>|
-    <a asp-action="ShowGames" asp-route-id="@ViewBag.StudioId" class="btn btn-info btn-sm" role="button">переглянути ігри cтудії</a>
-
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
 </div>
