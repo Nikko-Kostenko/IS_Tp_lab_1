@@ -23,7 +23,7 @@ namespace IS_Tp_lab_1.Controllers
         }
 
         // GET: Games
-        public async Task<IActionResult> Index(int? id, string? name, int? studioId, string? studioName, int? genreId)
+        public async Task<IActionResult> Index(int? id, string? name, int? studioId, string? studioName)
         {
              
 
@@ -31,38 +31,23 @@ namespace IS_Tp_lab_1.Controllers
             ViewBag.StudioName = studioName;
             ViewBag.PlatformId = id;
             ViewBag.PlatformName = name;
-            ViewBag.GenreId = genreId;
            
+
+
+            var gameIndustryPlatformContext = _context.Games.Where(g => g.PlatformId == id).Include(g => g.GameStudio)
+                    .Include(g => g.Genre).Include(g => g.Platform);
             
-            
+            var gameIndustryStudioContext = _context.Games.Where(g => g.GameStudioId == studioId).Include(g => g.GameStudio)
+                .Include(g => g.Genre).Include(g => g.Platform);
 
 
             if (id != null)
             {
-                if (genreId == null)
-                {
-                    return View(await _context.Games.Where(g => g.PlatformId == id).Include(g => g.GameStudio)
-                        .Include(g => g.Genre).Include(g => g.Platform).ToListAsync());
-                }
-                else
-                {
-                    return View(await _context.Games.Where(g => g.GenreId == genreId).Where(g => g.PlatformId == id).Include(g => g.GameStudio)
-                        .Include(g => g.Genre).Include(g => g.Platform).ToListAsync());
-                }
+                return View(await gameIndustryPlatformContext.ToListAsync());
             }
             else if (studioId != null)
             {
-                if (genreId == null)
-                {
-                    return View(await _context.Games.Where(g => g.GameStudioId == studioId).Include(g => g.GameStudio)
-                        .Include(g => g.Genre).Include(g => g.Platform).ToListAsync());
-                }
-                else
-                {
-                   
-                    return View(await _context.Games.Where(g => g.GenreId == genreId).Where(g => g.GameStudioId == studioId).Include(g => g.GameStudio)
-                        .Include(g => g.Genre).Include(g => g.Platform).ToListAsync());
-                }
+                return View(await gameIndustryStudioContext.ToListAsync());
             }
             else
             {
@@ -94,7 +79,6 @@ namespace IS_Tp_lab_1.Controllers
         // GET: Games/Create
         public IActionResult Create(int? PlatformId, int? StudioId)
         {
-            
             if (PlatformId == null)
             {
                 ViewBag.CheckIndex = null;
