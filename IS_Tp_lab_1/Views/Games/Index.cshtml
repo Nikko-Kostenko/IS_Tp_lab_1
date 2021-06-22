@@ -9,14 +9,14 @@
 {
     <h1>Ігри для @ViewBag.PlatformName</h1>
     <p>
-        @Html.ActionLink("додати нову гру", "Create", new {PlatformID = @ViewBag.PlatformId}, new { @class = "btn btn-primary btn-block" })
+        @Html.ActionLink("додати нову гру", "Create", new { PlatformID = @ViewBag.PlatformId }, new { @class = "btn btn-primary btn-block" })
     </p>
 }
 else
 {
     <h1>Ігри від @ViewBag.StudioName</h1>
     <p>
-        @Html.ActionLink("додати нову гру", "Create", new {StudioId = @ViewBag.StudioId}, new { @class = "btn btn-primary btn-block" })
+        @Html.ActionLink("додати нову гру", "Create", new { StudioId = @ViewBag.StudioId }, new { @class = "btn btn-primary btn-block" })
     </p>
 }
 
@@ -34,43 +34,65 @@ else
                 @Html.DisplayNameFor(model => model.GameStudio)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Genre)
+                <div class="dropdown">
+                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                        @Html.DisplayNameFor(model => model.Genre)
+                    </button>
+                    <div class="dropdown-menu">
+                        @Html.ActionLink("усі", "Index", new { id = @ViewBag.PlatformId, name = @ViewBag.PlatformName, studioName = @ViewBag.studioName, studioId = @ViewBag.StudioId, genreId = "" }, new { @class = "dropdown-item" })
+                        @using (GameIndustryContext context = new GameIndustryContext())
+                        {
+
+                            foreach (var gitem in context.Genres.ToList())
+                            {
+                                @Html.ActionLink(gitem.Name, "Index", new { id = @ViewBag.PlatformId, name = @ViewBag.PlatformName, studioName = @ViewBag.studioName, studioId = @ViewBag.StudioId, genreId = @gitem.Id }, new { @class = "dropdown-item" })
+                            }
+
+                        }
+                    </div>
+                </div>
             </th>
             <th>
-            @if (ViewBag.PlatformId == null)
-            {
-                @Html.DisplayNameFor(model => model.Platform.Name)
-            }
+                @if (ViewBag.PlatformId == null)
+                {
+                    @Html.DisplayNameFor(model => model.Platform.Name)
+                }
             </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Info)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GameStudio.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre.Name)
-            </td>
-            <td>
-                @if (ViewBag.PlatformId == null)
-                {
-                    @Html.DisplayFor(modelitem => item.Platform.Name)
-                }
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Детальніше</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Видалити</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Info)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GameStudio.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Genre.Name)
+                </td>
+                <td>
+                    @if (ViewBag.PlatformId == null)
+                    {
+                        @Html.DisplayFor(modelitem => item.Platform.Name)
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Редагувати</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Детальніше</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Видалити</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+
+
+
+

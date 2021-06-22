@@ -11,39 +11,39 @@
 </p>
 <table class="table table-hover">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Info)
-            </th>
-            <th>
-                <div class="dropdown">
-                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                        @Html.DisplayNameFor(model => model.Country)
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" asp-route-id="" asp-controller="GameStudios" asp-action="Index">Усі</a>
-                        @using (GameIndustryContext context = new GameIndustryContext())
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Info)
+        </th>
+        <th>
+            <div class="dropdown">
+                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                    @Html.DisplayNameFor(model => model.Country)
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" asp-route-id="" asp-controller="GameStudios" asp-action="Index">Усі</a>
+                    @using (GameIndustryContext context = new GameIndustryContext())
+                    {
+
+                        foreach (var gitem in context.Countries.ToList())
                         {
-
-                            foreach (var gitem in context.Countries.ToList())
-                            {
-                                <a class="dropdown-item" asp-route-id="@gitem.Id" asp-controller="GameStudios" asp-action="Index">
-                                    @Html.DisplayFor(modelitem => gitem.Name)
-                                </a>
-                            }
-
+                            <a class="dropdown-item" asp-route-id="@gitem.Id" asp-controller="GameStudios" asp-action="Index">
+                                @Html.DisplayFor(modelitem => gitem.Name)
+                            </a>
                         }
-                    </div>
-                    </div>
-</th>
-            <th></th>
-        </tr>
+
+                    }
+                </div>
+            </div>
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -60,6 +60,38 @@
                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">Видалити</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
+
+<div class="container">
+    <div id="chart2"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <div>
+        <script>
+            google.charts.load('current', { 'packages': ['corechart'] });
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+
+                $.get('/api/Charts/JsonData2',
+                    function(JsonData2) {
+                        data = google.visualization.arrayToDataTable(JsonData2, false);
+                        var option = {
+                            title: "Співвідношення кількості ігор по платформах",
+                            backgroundColor: '#d9e3f1',
+                            width: 500,
+                            height: 400,
+                            pieHole: 0.4,
+                            colors: ['#6610f2', '#5b62f4', '#ec8f6e', '#43cc29', '#ffc107']
+                        };
+                        chart = new google.visualization.PieChart(document.getElementById('chart2'));
+                        chart.draw(data, option);
+                    })
+            }
+        </script>
+    </div>
+}
