@@ -1,8 +1,67 @@
-﻿@{
+﻿@model IEnumerable<IS_Tp_lab_1.Platform>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Платформи</h1>
+
 </div>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-controller="Platforms" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">редагувати</a> |
+                    <a asp-action="Details" asp-controller="Platforms" asp-route-id="@item.Id" class="btn btn-info btn-sm" role="button">переглянути ігри</a> 
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="container">
+    <div id="chart1"></div>
+</div>
+@section scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <div><div>
+        <script>
+                 google.charts.load('current', { 'packages': ['corechart'] });
+                 google.charts.setOnLoadCallback(drawChart);
+
+                 function drawChart() {
+
+                     $.get('/api/Charts/JsonData',
+                         function(JsonData) {
+                             data = google.visualization.arrayToDataTable(JsonData, false);
+                             var option = {
+                                 title: "Співвідношення кількості ігор по платформах",
+                                 backgroundColor: '#d9e3f1',
+                                 width: 500,
+                                 height: 400,
+                                 pieHole: 0.4,
+                                 colors: ['#6610f2', '#5b62f4', '#ec8f6e', '#43cc29', '#ffc107']
+                             };
+                             chart = new google.visualization.PieChart(document.getElementById('chart1'));
+                             chart.draw(data, option);
+                         })
+                 }
+             </script>
+    </div></div>
+}

@@ -53,7 +53,7 @@ namespace IS_Tp_lab_1
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Platforms}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

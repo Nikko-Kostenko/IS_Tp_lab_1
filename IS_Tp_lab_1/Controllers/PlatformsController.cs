@@ -39,7 +39,7 @@ namespace IS_Tp_lab_1.Controllers
                 return NotFound();
             }
 
-            return View(platform);
+            return RedirectToAction("Index", "Games", new {id = platform.Id ,name  =platform.Name});
         }
 
         // GET: Platforms/Create
